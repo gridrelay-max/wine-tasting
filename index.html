@@ -3,25 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cata a Ciegas</title>
+<title>8va Sesión — Club de Cata Valencia</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --wine: #722f37;
-    --wine-light: #8b3a42;
+    --wine-dark: #4a1a20;
     --gold: #c9a84c;
     --gold-light: #d4b86a;
     --cream: #faf7f2;
     --sand: #f0ebe3;
     --text: #2c2c2c;
     --text-light: #6b6b6b;
-    --border: #e0d8ce;
+    --border: #d8d0c4;
     --white: #ffffff;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-    --shadow-hover: 0 6px 24px rgba(0,0,0,0.12);
-    --radius: 12px;
-    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @media print {
+    body { background: white; font-size: 9pt; }
+    header { padding: 1.5rem 1rem; break-after: avoid; }
+    header h1 { font-size: 1.3rem; }
+    .wine-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 1rem; }
+    .scoring-row input { border-bottom: 1px solid #999; }
+    .container { padding: 0.5rem; }
+    .no-print { display: none !important; }
   }
 
   body {
@@ -33,12 +39,11 @@
   }
 
   header {
-    background: linear-gradient(135deg, var(--wine) 0%, #4a1a20 100%);
+    background: linear-gradient(135deg, var(--wine) 0%, var(--wine-dark) 100%);
     color: var(--white);
     text-align: center;
-    padding: 3rem 1.5rem 2.5rem;
+    padding: 2.5rem 1.5rem 2rem;
     position: relative;
-    overflow: hidden;
   }
 
   header::before {
@@ -49,375 +54,502 @@
     pointer-events: none;
   }
 
-  header h1 {
-    font-size: 2.4rem;
-    font-weight: 400;
-    letter-spacing: 0.15em;
+  .header-eyebrow {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    margin-bottom: 0.3rem;
+    letter-spacing: 0.25em;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
     position: relative;
   }
 
-  header p {
-    font-style: italic;
-    opacity: 0.8;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+  header h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+    line-height: 1.3;
   }
 
   .divider {
     width: 60px;
     height: 1px;
     background: var(--gold);
-    margin: 1rem auto;
+    margin: 0.8rem auto;
+  }
+
+  .header-sub {
+    font-style: italic;
+    opacity: 0.75;
+    font-size: 0.95rem;
+    position: relative;
   }
 
   .container {
-    max-width: 900px;
+    max-width: 880px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
+    padding: 1.5rem 1.25rem 3rem;
   }
 
   .wine-card {
     background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
     margin-bottom: 1.5rem;
     overflow: hidden;
-    transition: box-shadow var(--transition);
   }
 
-  .wine-card:hover { box-shadow: var(--shadow-hover); }
-
-  .card-header {
+  .card-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
-    padding: 1.25rem 1.5rem;
-    cursor: pointer;
-    user-select: none;
-    transition: background var(--transition);
+    padding: 1.25rem 1.5rem 0;
   }
-
-  .card-header:hover { background: var(--sand); }
 
   .wine-number {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--wine);
     color: var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     flex-shrink: 0;
     font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin-top: 2px;
   }
 
-  .card-info { flex: 1; min-width: 0; }
+  .card-title-block { flex: 1; min-width: 0; }
 
-  .card-info h2 {
-    font-size: 1.2rem;
+  .card-title-block h2 {
+    font-size: 1.3rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     color: var(--wine);
-    line-height: 1.3;
+    line-height: 1.2;
+    margin-bottom: 0.15rem;
   }
 
-  .card-info .location {
+  .card-title-block .producer {
     font-size: 0.85rem;
     color: var(--text-light);
     font-style: italic;
   }
 
-  .card-info .winemaker {
-    font-size: 0.8rem;
-    color: var(--text-light);
-    margin-top: 2px;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-  }
-
-  .toggle-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all var(--transition);
-    color: var(--text-light);
-    font-size: 0.85rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-  }
-
-  .wine-card.open .toggle-icon {
-    background: var(--wine);
-    border-color: var(--wine);
-    color: var(--white);
-    transform: rotate(180deg);
-  }
-
-  .card-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, opacity 0.3s ease;
-    opacity: 0;
-  }
-
-  .wine-card.open .card-body {
-    max-height: 800px;
-    opacity: 1;
-  }
-
-  .card-body-inner {
-    padding: 0 1.5rem 1.5rem;
-  }
-
-  .tasting-grid {
+  .details-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.1rem 1.5rem;
+    padding: 0.75rem 1.5rem;
+    margin-left: 52px;
   }
 
-  .tasting-field { display: flex; flex-direction: column; }
+  .detail-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.2rem 0;
+  }
 
-  .tasting-field.full { grid-column: 1 / -1; }
+  .detail-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--wine);
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
-  .tasting-field label {
-    font-size: 0.7rem;
+  .detail-value {
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  .tasting-section {
+    padding: 0 1.5rem 1rem;
+    margin-left: 52px;
+  }
+
+  .tasting-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--wine-light);
-    margin-bottom: 0.35rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--wine);
     font-weight: 600;
+    margin-bottom: 0.3rem;
   }
 
-  .tasting-field textarea {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.65rem 0.85rem;
-    font-family: Georgia, serif;
-    font-size: 0.9rem;
+  .tasting-text {
+    font-size: 0.87rem;
+    line-height: 1.65;
     color: var(--text);
-    background: var(--cream);
-    resize: vertical;
-    min-height: 60px;
-    transition: border-color var(--transition), box-shadow var(--transition);
-    line-height: 1.5;
+    text-align: justify;
+    hyphens: auto;
   }
 
-  .tasting-field textarea:focus {
-    outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  .scoring-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem 1.25rem;
+    margin-left: 52px;
+    border-top: 1px solid var(--sand);
+    margin-top: 0.5rem;
   }
 
-  .tasting-field textarea::placeholder {
-    color: #bbb;
-    font-style: italic;
-  }
-
-  .conclusion-field textarea { min-height: 80px; }
-
-  .card-actions {
+  .scoring-field {
     display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
-  .btn {
+  .scoring-field label {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all var(--transition);
+    letter-spacing: 0.1em;
+    color: var(--wine);
     font-weight: 600;
   }
 
-  .btn-clear {
+  .scoring-field input {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
     background: transparent;
-    color: var(--text-light);
-    border: 1px solid var(--border);
-  }
-  .btn-clear:hover { background: var(--sand); color: var(--text); }
-
-  .btn-save {
-    background: var(--wine);
-    color: var(--white);
-  }
-  .btn-save:hover { background: var(--wine-light); }
-
-  .btn-save.saved {
-    background: var(--gold);
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    padding: 0.3rem 0;
     color: var(--text);
+    transition: border-color 0.2s;
+  }
+
+  .scoring-field input:focus {
+    outline: none;
+    border-bottom-color: var(--gold);
+  }
+
+  .scoring-field input::placeholder {
+    color: #ccc;
+    font-style: italic;
+    font-size: 0.85rem;
   }
 
   footer {
     text-align: center;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
     color: var(--text-light);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-style: italic;
     border-top: 1px solid var(--border);
-    max-width: 900px;
+    max-width: 880px;
     margin: 0 auto;
   }
 
-  .reset-all {
-    display: block;
-    margin: 0 auto 2rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0.6rem 1.5rem;
-    border-radius: 6px;
-    border: 1.5px solid var(--wine);
-    background: transparent;
-    color: var(--wine);
-    cursor: pointer;
-    transition: all var(--transition);
-    font-weight: 600;
-  }
-
-  .reset-all:hover {
-    background: var(--wine);
-    color: var(--white);
-  }
-
   @media (max-width: 600px) {
-    header h1 { font-size: 1.7rem; }
-    .container { padding: 1.25rem 1rem 3rem; }
-    .tasting-grid { grid-template-columns: 1fr; }
-    .card-header { padding: 1rem 1.15rem; }
-    .card-body-inner { padding: 0 1.15rem 1.25rem; }
-    .card-info h2 { font-size: 1.05rem; }
+    header h1 { font-size: 1.2rem; letter-spacing: 0.04em; }
+    .container { padding: 1rem 0.75rem 2rem; }
+    .card-top { padding: 1rem 1rem 0; gap: 0.75rem; }
+    .details-grid { margin-left: 0; padding: 0.75rem 1rem; grid-template-columns: 1fr 1fr; }
+    .tasting-section { margin-left: 0; padding: 0 1rem 1rem; }
+    .scoring-row { margin-left: 0; padding: 0.75rem 1rem 1rem; grid-template-columns: 1fr 1fr 1fr; }
+    .card-title-block h2 { font-size: 1.1rem; }
+    .wine-number { width: 34px; height: 34px; font-size: 0.9rem; }
+  }
+
+  @media (max-width: 400px) {
+    .scoring-row { grid-template-columns: 1fr; gap: 0.6rem; }
+    .details-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Cata a Ciegas</h1>
+  <div class="header-eyebrow">Club de Cata Valencia</div>
+  <h1>8va Sesión del Club de Cata Valencia</h1>
   <div class="divider"></div>
-  <p>Cinco vinos, cinco historias</p>
+  <div class="header-sub">Marzo 10, 2026 — Sauvignon Blanc del Mundo</div>
 </header>
 
 <div class="container">
-  <div id="wines"></div>
-  <button class="reset-all" onclick="resetAll()">Reiniciar todas las notas</button>
+
+  <!-- Wine 1 -->
+  <div class="wine-card">
+    <div class="card-top">
+      <div class="wine-number">1</div>
+      <div class="card-title-block">
+        <h2>SAVINAT</h2>
+        <div class="producer">Gramona</div>
+      </div>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Cosecha</span>
+        <span class="detail-value">2024</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Varietal</span>
+        <span class="detail-value">100% Sauvignon Blanc</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Alcohol</span>
+        <span class="detail-value">12.5%</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">DO</span>
+        <span class="detail-value">Penedès, Cataluña</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">País</span>
+        <span class="detail-value">España</span>
+      </div>
+    </div>
+    <div class="tasting-section">
+      <div class="tasting-label">Nota de Cata</div>
+      <div class="tasting-text">
+        Gramona es una bodega que fue fundada en 1881 y que, por lo tanto, lleva más de 130 años dedicada a la elaboración de vinos. Este vino es procedente de la finca "Can Aguilera", cuyos viñedos se encuentran en las laderas de Montserrat, a 500 metros de altitud. <strong>A la vista:</strong> Limpio y brillante, presenta un pálido color amarillo palizo con reflejos dorados, con una elegante lágrima glicérica. <strong>En nariz:</strong> Intensos y sugerentes aromas de fruta tropical y frescos cítricos. Hierbas aromáticas, notas especiadas y amables tostados y suaves ahumados. <strong>En boca:</strong> Entrada amable que da paso a un largo recorrido untuoso. Con una excelente acidez, este vino blanco de la bodega Gramona tiene un final muy expresivo, con un agradable toque salino.
+      </div>
+    </div>
+    <div class="scoring-row">
+      <div class="scoring-field">
+        <label for="w1-puntos">Puntos</label>
+        <input type="text" id="w1-puntos" placeholder="/ 100">
+      </div>
+      <div class="scoring-field">
+        <label for="w1-preferencia">Preferencia</label>
+        <input type="text" id="w1-preferencia" placeholder="1–5">
+      </div>
+      <div class="scoring-field">
+        <label for="w1-precio">Precio</label>
+        <input type="text" id="w1-precio" placeholder="€">
+      </div>
+    </div>
+  </div>
+
+  <!-- Wine 2 -->
+  <div class="wine-card">
+    <div class="card-top">
+      <div class="wine-number">2</div>
+      <div class="card-title-block">
+        <h2>LIVIO FELLUGA</h2>
+        <div class="producer">Livio Felluga</div>
+      </div>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Cosecha</span>
+        <span class="detail-value">2023</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Varietal</span>
+        <span class="detail-value">100% Sauvignon Blanc</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Alcohol</span>
+        <span class="detail-value">13.0%</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">DO</span>
+        <span class="detail-value">Friuli Colli Orientale</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">País</span>
+        <span class="detail-value">Italia</span>
+      </div>
+    </div>
+    <div class="tasting-section">
+      <div class="tasting-label">Nota de Cata</div>
+      <div class="tasting-text">
+        La bodega Livio Felluga tiene sus orígenes en los años 30, cuando su homónima se trasladó a las onduladas estribaciones alpinas de Rosazzo. Livio comenzó a replantar las vides aquí, sentando las bases de una bodega que sigue vigente casi 100 años después, bajo la guía de sus hijos. Las uvas Sauvignon Blanc crecían con sus raíces en Ponca, un suelo antiguo rico en arenisca, que otorga una fuerte mineralidad y una acidez distintiva a su vino. De un amarillo dorado en el vaso, con atractivos tonos verdes. La nariz es penetrante, viva con notas de lima, pimienta amarilla, flores blancas y hierbas picantes. Estos sabores continúan en el paladar, que se caracteriza por una acidez rigurosa y un carácter fresco y jugoso. También hay notas de melocotón y piña, lo que hace de este un Sauvignon Blanc realmente con carácter y equilibrado, listo para ser disfrutado por cualquiera.
+      </div>
+    </div>
+    <div class="scoring-row">
+      <div class="scoring-field">
+        <label for="w2-puntos">Puntos</label>
+        <input type="text" id="w2-puntos" placeholder="/ 100">
+      </div>
+      <div class="scoring-field">
+        <label for="w2-preferencia">Preferencia</label>
+        <input type="text" id="w2-preferencia" placeholder="1–5">
+      </div>
+      <div class="scoring-field">
+        <label for="w2-precio">Precio</label>
+        <input type="text" id="w2-precio" placeholder="€">
+      </div>
+    </div>
+  </div>
+
+  <!-- Wine 3 -->
+  <div class="wine-card">
+    <div class="card-top">
+      <div class="wine-number">3</div>
+      <div class="card-title-block">
+        <h2>AMISFIELD</h2>
+        <div class="producer">Amisfield</div>
+      </div>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Cosecha</span>
+        <span class="detail-value">2024</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Varietal</span>
+        <span class="detail-value">100% Sauvignon Blanc</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Alcohol</span>
+        <span class="detail-value">14%</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">DO</span>
+        <span class="detail-value">Central Otago</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">País</span>
+        <span class="detail-value">Nueva Zelanda</span>
+      </div>
+    </div>
+    <div class="tasting-section">
+      <div class="tasting-label">Nota de Cata</div>
+      <div class="tasting-text">
+        Situada bajo la impresionante cordillera de Pisa, en el centro de Otago, Amisfield Wines se ha convertido discretamente en uno de los productores más respetados de Nueva Zelanda, conocida por la pureza de su fruta, prácticas ecológicas y un compromiso inquebrantable con el lugar. Lo que comenzó en 1988 como una antigua estación lana de merino es ahora un viñedo de una sola finca que define la elegancia e intensidad del Pinot Noir y los blancos aromáticos de Central Otago. El viñedo abarca 92 hectáreas y está completamente certificado como ecológico. El Sauvignon Blanc de Amisfield es expresivo y brillante. Mostrando una característica cáscara de lima matzada, jazmín y madreselva antes de pasar a la frescura dulce del pimiento rojo y el maracuyá en el paladar. La mineralidad de roca triturada envuelve este vino y el pomelo y el melocotón maduro lideran el camino, con vibrantes notas herbales y una línea vibrante de acidez de cáscara cítrica.
+      </div>
+    </div>
+    <div class="scoring-row">
+      <div class="scoring-field">
+        <label for="w3-puntos">Puntos</label>
+        <input type="text" id="w3-puntos" placeholder="/ 100">
+      </div>
+      <div class="scoring-field">
+        <label for="w3-preferencia">Preferencia</label>
+        <input type="text" id="w3-preferencia" placeholder="1–5">
+      </div>
+      <div class="scoring-field">
+        <label for="w3-precio">Precio</label>
+        <input type="text" id="w3-precio" placeholder="€">
+      </div>
+    </div>
+  </div>
+
+  <!-- Wine 4 -->
+  <div class="wine-card">
+    <div class="card-top">
+      <div class="wine-number">4</div>
+      <div class="card-title-block">
+        <h2>DE LADOUCETTE</h2>
+        <div class="producer">Baron de Ladoucette</div>
+      </div>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Cosecha</span>
+        <span class="detail-value">2024</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Varietal</span>
+        <span class="detail-value">100% Sauvignon Blanc</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Alcohol</span>
+        <span class="detail-value">12.5%</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">DO</span>
+        <span class="detail-value">Pouilly-Fumé</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">País</span>
+        <span class="detail-value">Francia</span>
+      </div>
+    </div>
+    <div class="tasting-section">
+      <div class="tasting-label">Nota de Cata</div>
+      <div class="tasting-text">
+        La Bodega del barón de Ladoucette produce algunos de los mejores Sauvignon Blanc del mundo. La historia de la bodega tiene sus raíces en 1787, cuando la familia Comte Lafond compra los viñedos de Pouilly-Fumé en Chateau du Nozet, la Pouilly, de la hija ilegítima del rey de Francia, Luis XV. La fama del Barón de Ladoucette está consagrada con el noble Pouilly-Fumé Baron de L, universalmente reconocido como el mejor Sauvignon del mundo, una obra de arte de los valores sensoriales únicos de un terroir de calidad único y claro a la vista, perla enológica con gran finura y amplitud en perfumes. De un amarillo dorado pálido pero claro, ofrece una intensa gama aromática que gira en torno a evidentes toques de flores blancas, sobre un fondo ligeramente ahumado y mineral. En el paladar es fresco y potente, seco y equilibrado, con gran estructura y delicadeza. Hay notas de hierba, hierbas de campo, flores de lila y azahar en la nariz. Una mezcla de frutas de huerto y cáscara de limón manzana de gala, hierbas de campo, flores de lila y azahar en la nariz. Una mezcla de frutas de huerto y cáscara de limón seco bien al paladar, que es afrutada sin ser un capricho.
+      </div>
+    </div>
+    <div class="scoring-row">
+      <div class="scoring-field">
+        <label for="w4-puntos">Puntos</label>
+        <input type="text" id="w4-puntos" placeholder="/ 100">
+      </div>
+      <div class="scoring-field">
+        <label for="w4-preferencia">Preferencia</label>
+        <input type="text" id="w4-preferencia" placeholder="1–5">
+      </div>
+      <div class="scoring-field">
+        <label for="w4-precio">Precio</label>
+        <input type="text" id="w4-precio" placeholder="€">
+      </div>
+    </div>
+  </div>
+
+  <!-- Wine 5 -->
+  <div class="wine-card">
+    <div class="card-top">
+      <div class="wine-number">5</div>
+      <div class="card-title-block">
+        <h2>COMTE LAFOND</h2>
+        <div class="producer">Domaine de Ladoucette</div>
+      </div>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Cosecha</span>
+        <span class="detail-value">2024</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Varietal</span>
+        <span class="detail-value">100% Sauvignon Blanc</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Alcohol</span>
+        <span class="detail-value">13%</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">DO</span>
+        <span class="detail-value">Sancerre</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">País</span>
+        <span class="detail-value">Francia</span>
+      </div>
+    </div>
+    <div class="tasting-section">
+      <div class="tasting-label">Nota de Cata</div>
+      <div class="tasting-text">
+        Comte Lafond Sancerre es producido por Domaine de Ladoucette en el valle del Loira, es una expresión de referencia de 100% Sauvignon Blanc de las laderas ricas en piedra caliza y sílex. Las uvas, cultivadas en vides de entre 25 y 35 años, se cosechan a mano y se prensan suavemente utilizando un sistema de bodega de tres niveles de flujo por gravedad diseñado para preservar su delicadeza y la frescura. La fermentación se realiza lentamente en tanques de acero inoxidable con control de temperatura, seguida de un breve envejecimiento en lías para añadir textura y complejidad. Presenta: Precioso vestido cristalino, dorado pálido. En nariz primer cítricos (cáscara de naranja y limón), luego frutas de verano (melocotón blanco y pera), finalmente notas de miel sobre un sutil fondo de menta. El ataque vivo y muy franco precede a la acidez refrescante, que se mezcla con los sabores refrescantes de frutas exóticas (lichi, mango). Entonces, en delicada armonía, se revelan la grasa y el aroma de almendra y pera frescas. El final, basado en una mineralidad pedregosa, se prolonga con notas de limón muy maduro.
+      </div>
+    </div>
+    <div class="scoring-row">
+      <div class="scoring-field">
+        <label for="w5-puntos">Puntos</label>
+        <input type="text" id="w5-puntos" placeholder="/ 100">
+      </div>
+      <div class="scoring-field">
+        <label for="w5-preferencia">Preferencia</label>
+        <input type="text" id="w5-preferencia" placeholder="1–5">
+      </div>
+      <div class="scoring-field">
+        <label for="w5-precio">Precio</label>
+        <input type="text" id="w5-precio" placeholder="€">
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <footer>
-  Cata a Ciegas &middot; Toma tu tiempo, confia en tu paladar
+  Club de Cata Valencia &middot; 8va Sesión &middot; Marzo 2026
 </footer>
 
-<script>
-const wines = [
-  { id: 1, name: "Amisfield", location: "Central Otago, Nueva Zelanda", winemaker: "Ben Leen" },
-  { id: 2, name: "Comte Lafond", location: "Sancerre, Francia", winemaker: "Patrick de Ladoucette" },
-  { id: 3, name: "Livio Felluga", location: "Friuli, Italia", winemaker: "Andrea Felluga" },
-  { id: 4, name: "Gramona", location: "Penedès, España", winemaker: "Pere Costa y Jordi Vallés" },
-  { id: 5, name: "Baron de Ladoucette", location: "Pouilly-Fumé, Francia", winemaker: "Patrick de Ladoucette" }
-];
-
-const fields = [
-  { key: "appearance", label: "Vista", placeholder: "Color, intensidad, brillo...", full: false },
-  { key: "nose", label: "Nariz", placeholder: "Aromas primarios, secundarios...", full: false },
-  { key: "palate", label: "Boca", placeholder: "Cuerpo, acidez, taninos, final...", full: false },
-  { key: "score", label: "Puntuación", placeholder: "Tu valoración...", full: false },
-  { key: "conclusion", label: "Conclusión", placeholder: "Variedad probable, añada, calidad general...", full: true }
-];
-
-const STORAGE_KEY = "cata_ciegas_notes";
-
-function loadNotes() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-  catch { return {}; }
-}
-
-function saveNotes(notes) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-}
-
-function render() {
-  const container = document.getElementById("wines");
-  const notes = loadNotes();
-
-  container.innerHTML = wines.map(w => {
-    const wNotes = notes[w.id] || {};
-    return `
-    <div class="wine-card" id="card-${w.id}">
-      <div class="card-header" onclick="toggle(${w.id})">
-        <div class="wine-number">${w.id}</div>
-        <div class="card-info">
-          <h2>${w.name}</h2>
-          <div class="location">${w.location}</div>
-          <div class="winemaker">Enólogo: ${w.winemaker}</div>
-        </div>
-        <div class="toggle-icon">&#9662;</div>
-      </div>
-      <div class="card-body">
-        <div class="card-body-inner">
-          <div class="tasting-grid">
-            ${fields.map(f => `
-              <div class="tasting-field ${f.full ? 'full' : ''} ${f.key === 'conclusion' ? 'conclusion-field' : ''}">
-                <label for="w${w.id}-${f.key}">${f.label}</label>
-                <textarea id="w${w.id}-${f.key}" placeholder="${f.placeholder}" data-wine="${w.id}" data-field="${f.key}">${wNotes[f.key] || ''}</textarea>
-              </div>
-            `).join('')}
-          </div>
-          <div class="card-actions">
-            <button class="btn btn-clear" onclick="clearCard(${w.id})">Limpiar</button>
-            <button class="btn btn-save" id="save-${w.id}" onclick="saveCard(${w.id})">Guardar</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function toggle(id) {
-  document.getElementById(`card-${id}`).classList.toggle("open");
-}
-
-function saveCard(id) {
-  const notes = loadNotes();
-  notes[id] = {};
-  fields.forEach(f => {
-    notes[id][f.key] = document.getElementById(`w${id}-${f.key}`).value;
-  });
-  saveNotes(notes);
-  const btn = document.getElementById(`save-${id}`);
-  btn.textContent = "Guardado";
-  btn.classList.add("saved");
-  setTimeout(() => { btn.textContent = "Guardar"; btn.classList.remove("saved"); }, 1500);
-}
-
-function clearCard(id) {
-  fields.forEach(f => { document.getElementById(`w${id}-${f.key}`).value = ''; });
-  const notes = loadNotes();
-  delete notes[id];
-  saveNotes(notes);
-}
-
-function resetAll() {
-  if (!confirm("¿Borrar todas las notas de cata?")) return;
-  localStorage.removeItem(STORAGE_KEY);
-  render();
-}
-
-render();
-</script>
 </body>
 </html>
