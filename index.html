@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cata a Ciegas</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --wine: #722f37;
+    --wine-light: #8b3a42;
+    --gold: #c9a84c;
+    --gold-light: #d4b86a;
+    --cream: #faf7f2;
+    --sand: #f0ebe3;
+    --text: #2c2c2c;
+    --text-light: #6b6b6b;
+    --border: #e0d8ce;
+    --white: #ffffff;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-hover: 0 6px 24px rgba(0,0,0,0.12);
+    --radius: 12px;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--wine) 0%, #4a1a20 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 3rem 1.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  header h1 {
+    font-size: 2.4rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    position: relative;
+  }
+
+  header p {
+    font-style: italic;
+    opacity: 0.8;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 1rem auto;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .wine-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: box-shadow var(--transition);
+  }
+
+  .wine-card:hover { box-shadow: var(--shadow-hover); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition);
+  }
+
+  .card-header:hover { background: var(--sand); }
+
+  .wine-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--wine);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .card-info { flex: 1; min-width: 0; }
+
+  .card-info h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--wine);
+    line-height: 1.3;
+  }
+
+  .card-info .location {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  .card-info .winemaker {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 2px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .toggle-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition);
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .wine-card.open .toggle-icon {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: var(--white);
+    transform: rotate(180deg);
+  }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .wine-card.open .card-body {
+    max-height: 800px;
+    opacity: 1;
+  }
+
+  .card-body-inner {
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .tasting-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .tasting-field { display: flex; flex-direction: column; }
+
+  .tasting-field.full { grid-column: 1 / -1; }
+
+  .tasting-field label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--wine-light);
+    margin-bottom: 0.35rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+  }
+
+  .tasting-field textarea {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--cream);
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    line-height: 1.5;
+  }
+
+  .tasting-field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  }
+
+  .tasting-field textarea::placeholder {
+    color: #bbb;
+    font-style: italic;
+  }
+
+  .conclusion-field textarea { min-height: 80px; }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .btn {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-weight: 600;
+  }
+
+  .btn-clear {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border);
+  }
+  .btn-clear:hover { background: var(--sand); color: var(--text); }
+
+  .btn-save {
+    background: var(--wine);
+    color: var(--white);
+  }
+  .btn-save:hover { background: var(--wine-light); }
+
+  .btn-save.saved {
+    background: var(--gold);
+    color: var(--text);
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .reset-all {
+    display: block;
+    margin: 0 auto 2rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    border: 1.5px solid var(--wine);
+    background: transparent;
+    color: var(--wine);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-weight: 600;
+  }
+
+  .reset-all:hover {
+    background: var(--wine);
+    color: var(--white);
+  }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.7rem; }
+    .container { padding: 1.25rem 1rem 3rem; }
+    .tasting-grid { grid-template-columns: 1fr; }
+    .card-header { padding: 1rem 1.15rem; }
+    .card-body-inner { padding: 0 1.15rem 1.25rem; }
+    .card-info h2 { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cata a Ciegas</h1>
+  <div class="divider"></div>
+  <p>Cinco vinos, cinco historias</p>
+</header>
+
+<div class="container">
+  <div id="wines"></div>
+  <button class="reset-all" onclick="resetAll()">Reiniciar todas las notas</button>
+</div>
+
+<footer>
+  Cata a Ciegas &middot; Toma tu tiempo, confia en tu paladar
+</footer>
+
+<script>
+const wines = [
+  { id: 1, name: "Amisfield", location: "Central Otago, Nueva Zelanda", winemaker: "Ben Leen" },
+  { id: 2, name: "Comte Lafond", location: "Sancerre, Francia", winemaker: "Patrick de Ladoucette" },
+  { id: 3, name: "Livio Felluga", location: "Friuli, Italia", winemaker: "Andrea Felluga" },
+  { id: 4, name: "Gramona", location: "Penedès, España", winemaker: "Pere Costa y Jordi Vallés" },
+  { id: 5, name: "Baron de Ladoucette", location: "Pouilly-Fumé, Francia", winemaker: "Patrick de Ladoucette" }
+];
+
+const fields = [
+  { key: "appearance", label: "Vista", placeholder: "Color, intensidad, brillo...", full: false },
+  { key: "nose", label: "Nariz", placeholder: "Aromas primarios, secundarios...", full: false },
+  { key: "palate", label: "Boca", placeholder: "Cuerpo, acidez, taninos, final...", full: false },
+  { key: "score", label: "Puntuación", placeholder: "Tu valoración...", full: false },
+  { key: "conclusion", label: "Conclusión", placeholder: "Variedad probable, añada, calidad general...", full: true }
+];
+
+const STORAGE_KEY = "cata_ciegas_notes";
+
+function loadNotes() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveNotes(notes) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
+
+function render() {
+  const container = document.getElementById("wines");
+  const notes = loadNotes();
+
+  container.innerHTML = wines.map(w => {
+    const wNotes = notes[w.id] || {};
+    return `
+    <div class="wine-card" id="card-${w.id}">
+      <div class="card-header" onclick="toggle(${w.id})">
+        <div class="wine-number">${w.id}</div>
+        <div class="card-info">
+          <h2>${w.name}</h2>
+          <div class="location">${w.location}</div>
+          <div class="winemaker">Enólogo: ${w.winemaker}</div>
+        </div>
+        <div class="toggle-icon">&#9662;</div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="tasting-grid">
+            ${fields.map(f => `
+              <div class="tasting-field ${f.full ? 'full' : ''} ${f.key === 'conclusion' ? 'conclusion-field' : ''}">
+                <label for="w${w.id}-${f.key}">${f.label}</label>
+                <textarea id="w${w.id}-${f.key}" placeholder="${f.placeholder}" data-wine="${w.id}" data-field="${f.key}">${wNotes[f.key] || ''}</textarea>
+              </div>
+            `).join('')}
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-clear" onclick="clearCard(${w.id})">Limpiar</button>
+            <button class="btn btn-save" id="save-${w.id}" onclick="saveCard(${w.id})">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggle(id) {
+  document.getElementById(`card-${id}`).classList.toggle("open");
+}
+
+function saveCard(id) {
+  const notes = loadNotes();
+  notes[id] = {};
+  fields.forEach(f => {
+    notes[id][f.key] = document.getElementById(`w${id}-${f.key}`).value;
+  });
+  saveNotes(notes);
+  const btn = document.getElementById(`save-${id}`);
+  btn.textContent = "Guardado";
+  btn.classList.add("saved");
+  setTimeout(() => { btn.textContent = "Guardar"; btn.classList.remove("saved"); }, 1500);
+}
+
+function clearCard(id) {
+  fields.forEach(f => { document.getElementById(`w${id}-${f.key}`).value = ''; });
+  const notes = loadNotes();
+  delete notes[id];
+  saveNotes(notes);
+}
+
+function resetAll() {
+  if (!confirm("¿Borrar todas las notas de cata?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
